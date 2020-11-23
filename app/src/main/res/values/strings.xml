@@ -2,5 +2,8 @@
     <string name="app_name">Notes</string>
     <string name="push_me">Push me!</string>
     <string name="header">My first note</string>
+    <string name="note_header">Header</string>
+    <string name="text">Text</string>
     <string name="note1">Note 1</string>
+    <string name="back">Back</string>
 </resources>
