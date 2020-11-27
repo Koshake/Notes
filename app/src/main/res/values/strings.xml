@@ -4,6 +4,6 @@
     <string name="header">My first note</string>
     <string name="note_header">Header</string>
     <string name="text">Text</string>
-    <string name="note1">Note 1</string>
     <string name="back">Back</string>
+    <string name="save">Save</string>
 </resources>

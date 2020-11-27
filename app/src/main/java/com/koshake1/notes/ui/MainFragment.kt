@@ -3,6 +3,7 @@ package com.koshake1.notes.ui
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.View
+import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
 import com.koshake1.notes.viewmodel.MainViewModel
 import com.koshake1.notes.R

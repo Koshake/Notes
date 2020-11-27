@@ -6,4 +6,9 @@
         android:orderInCategory="10"
         android:title="@string/back"
         app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/action_save"
+        android:orderInCategory="10"
+        android:title="@string/save"
+        app:showAsAction="never" />
 </menu>
