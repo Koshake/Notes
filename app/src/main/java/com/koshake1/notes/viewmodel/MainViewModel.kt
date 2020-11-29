@@ -1,17 +1,13 @@
 package com.koshake1.notes.viewmodel
 
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.map
 import com.koshake1.notes.data.NotesRepositoryImpl
 
 class MainViewModel : ViewModel() {
-    private val viewStateLiveData = MutableLiveData<ViewState>(ViewState.EMPTY)
-
-    init {
-        val notes = NotesRepositoryImpl.getAllNotes()
-        viewStateLiveData.value = ViewState.Value(notes)
-    }
-
-    fun observeViewState(): LiveData<ViewState> = viewStateLiveData
+    fun observeViewState(): LiveData<ViewState> = NotesRepositoryImpl.observeNotes()
+        .map {
+            if (it.isEmpty()) ViewState.EMPTY else ViewState.Value(it)
+        }
 }
