@@ -10,10 +10,10 @@ class LiveEvent<T> : MutableLiveData<T>() {
     private val observers = ArraySet<EventData<in T>>()
 
     override fun observe(owner: LifecycleOwner, observer: Observer<in T>) {
-        val observer = EventData(observer)
-        observers.add(observer)
+        val data = EventData(observer)
+        observers.add(data)
 
-        super.observe(owner, observer)
+        super.observe(owner, data)
     }
 
     override fun removeObserver(observer: Observer<in T>) {

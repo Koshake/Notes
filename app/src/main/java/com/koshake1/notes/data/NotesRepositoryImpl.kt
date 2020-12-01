@@ -12,6 +12,10 @@ class NotesRepositoryImpl(private val provider: FireBaseProvider) : NotesReposit
     override fun addOrReplaceNote(newNote: Note): LiveData<Result<Note>> {
         return provider.addOrReplaceNote(newNote)
     }
+
+    override fun getCurrentUser(): User? {
+        return provider.getCurrentUser()
+    }
 }
 
 val notesRepository: NotesRepository by lazy { NotesRepositoryImpl(FireBaseProvider()) }

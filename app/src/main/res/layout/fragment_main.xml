@@ -38,10 +38,11 @@
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
                 android:background="@android:color/transparent"
-                app:titleTextColor="@color/colorAccent"
-                app:title="@string/header"
                 app:layout_collapseMode="pin"
-                app:layout_scrollFlags="scroll|enterAlways">
+                app:layout_scrollFlags="scroll|enterAlways"
+                app:title="@string/header"
+                app:titleTextColor="@color/colorAccent">
+
             </androidx.appcompat.widget.Toolbar>
 
         </com.google.android.material.appbar.CollapsingToolbarLayout>
@@ -64,7 +65,7 @@
         app:backgroundTint="@color/color_red"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_margin="@dimen/medium"
+        android:layout_margin="@dimen/medium_8"
         app:srcCompat="@android:drawable/ic_input_add"
         tools:src="@android:drawable/ic_input_add" />
 

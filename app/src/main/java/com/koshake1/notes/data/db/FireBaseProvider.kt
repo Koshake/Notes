@@ -3,28 +3,42 @@ package com.koshake1.notes.data.db
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.QueryDocumentSnapshot
 import com.koshake1.notes.data.Note
+import com.koshake1.notes.data.User
+import com.koshake1.notes.errors.NoAuthException
 
 private const val NOTES_COLLECTION = "notes"
+private const val USERS_COLLECTION = "users"
 const val TAG = "FireStoreDatabase"
 
 class FireBaseProvider : DatabaseProvider {
     private val db = FirebaseFirestore.getInstance()
-    private val notesReference = db.collection(NOTES_COLLECTION)
     private val result = MutableLiveData<List<Note>>()
     private var subscribedOnDb = false
+
+    private val currentUser: FirebaseUser?
+        get() = FirebaseAuth.getInstance().currentUser
 
     override fun observeNotes(): LiveData<List<Note>> {
         if (!subscribedOnDb) subscribeForDbChanging()
         return result
     }
 
+    override fun getCurrentUser(): User? {
+        return currentUser?.run {
+            User(displayName, email)
+        }
+    }
+
     override fun addOrReplaceNote(newNote: Note): LiveData<Result<Note>> {
         val result = MutableLiveData<Result<Note>>()
 
-        notesReference
+        getUserNotesCollection()
             .document(newNote.id.toString())
             .set(newNote)
             .addOnSuccessListener {
@@ -40,7 +54,7 @@ class FireBaseProvider : DatabaseProvider {
     }
 
     private fun subscribeForDbChanging() {
-        notesReference.addSnapshotListener { snapshot, e ->
+        getUserNotesCollection().addSnapshotListener { snapshot, e ->
             if (e != null) {
                 Log.e(TAG, "Observe note exception:$e")
             } else if (snapshot != null) {
@@ -55,5 +69,19 @@ class FireBaseProvider : DatabaseProvider {
         }
 
         subscribedOnDb = true
+    }
+
+    private fun getUserNotesCollection() = currentUser?.let {
+        db.collection(USERS_COLLECTION).document(it.uid).collection(NOTES_COLLECTION)
+    } ?: throw NoAuthException()
+
+    private inline fun handleNotesReference(
+        referenceHandler: (CollectionReference) -> Unit,
+        exceptionHandler: (Throwable) -> Unit = {}
+    ) {
+        kotlin.runCatching {
+            getUserNotesCollection()
+        }
+            .fold(referenceHandler, exceptionHandler)
     }
 }
