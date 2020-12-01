@@ -5,10 +5,12 @@ import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.koshake1.notes.R
@@ -41,12 +43,26 @@ class NoteFragment : Fragment(R.layout.fragment_note) {
             bodyEt.setText(it.note)
         }
 
+        viewModel.showError().observe(viewLifecycleOwner) {
+            val text = if (it) {
+                "Error while saving note!"
+            }
+            else {
+                "Note is saved!"
+            }
+            Toast.makeText(requireContext(), text, Toast.LENGTH_LONG).show()
+        }
+
         titleEt.addTextChangedListener {
             viewModel.updateTitle(it?.toString() ?: "")
         }
 
         bodyEt.addTextChangedListener {
             viewModel.updateNote(it?.toString() ?: "")
+        }
+
+        buttonSave.setOnClickListener {
+            viewModel.saveNote()
         }
     }
 
@@ -60,6 +76,11 @@ class NoteFragment : Fragment(R.layout.fragment_note) {
             R.id.action_back -> {
                 view?.clearFocus()
                 activity?.onBackPressed()
+                return true
+            }
+            R.id.action_save -> {
+                view?.clearFocus()
+                viewModel.saveNote()
                 return true
             }
         }

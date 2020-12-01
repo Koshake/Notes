@@ -21,9 +21,10 @@
     </com.google.android.material.appbar.AppBarLayout>
 
     <LinearLayout
-        android:orientation="vertical"
+        android:id="@+id/linearLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:orientation="vertical"
         android:padding="16dp"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
@@ -37,7 +38,7 @@
                 android:id="@+id/titleEt"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textColor="@android:color/black"/>
+                android:textColor="@android:color/black" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <EditText
@@ -46,6 +47,15 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
             android:background="@null"
-            android:hint="@string/text"/>
+            android:hint="@string/text" />
+
+        <Button
+            android:id="@+id/buttonSave"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/colorMyBlue"
+            android:text="@string/save" />
+
     </LinearLayout>
+
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
