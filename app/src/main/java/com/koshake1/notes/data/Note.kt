@@ -1,10 +1,7 @@
 package com.koshake1.notes.data
 
-import android.content.Context
 import android.graphics.Color
 import android.os.Parcelable
-import androidx.core.content.ContextCompat
-import com.koshake1.notes.R
 import kotlinx.android.parcel.Parcelize
 import kotlin.random.Random
 
@@ -21,3 +18,17 @@ data class Note(
     val note: String = "",
     val color: Int = noteColor,
 ) : Parcelable
+
+enum class NoteColor {
+    WHITE,
+    YELLOW,
+    GREEN,
+    BLUE,
+    RED,
+    VIOLET,
+    PINK,
+    INDIAN_RED,
+    GRAY,
+    DARK_GREEN,
+    ORANGE
+}

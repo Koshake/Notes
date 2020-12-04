@@ -4,7 +4,6 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.koshake1.notes.data.NotesRepository
-import com.koshake1.notes.data.notesRepository
 import com.koshake1.notes.errors.NoAuthException
 import java.util.concurrent.Executors
 
@@ -21,7 +20,7 @@ class SplashViewModel(private val repository: NotesRepository) : ViewModel() {
     fun observeViewState(): LiveData<SplashViewState> = viewStateLiveData
 
     private fun requestUser() {
-        val user = notesRepository.getCurrentUser()
+        val user = repository.getCurrentUser()
 
         viewStateLiveData.postValue(
             if (user != null) {

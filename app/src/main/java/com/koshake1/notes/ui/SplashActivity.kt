@@ -3,35 +3,30 @@ package com.koshake1.notes.ui
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import com.firebase.ui.auth.AuthUI
 import com.koshake1.notes.R
-import com.koshake1.notes.data.notesRepository
+import com.koshake1.notes.databinding.ActivitySplashBinding
 import com.koshake1.notes.errors.NoAuthException
 import com.koshake1.notes.viewmodel.SplashViewModel
 import com.koshake1.notes.viewmodel.SplashViewState
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 private const val RC_SIGN_IN = 458
 
 class SplashActivity : AppCompatActivity() {
 
-    private val viewModel by lazy(LazyThreadSafetyMode.NONE) {
-        ViewModelProvider(this, object : ViewModelProvider.Factory {
-            override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-                return SplashViewModel(notesRepository) as T
-            }
-        }).get(
-            SplashViewModel::class.java
-        )
-    }
+    private val viewModel by viewModel<SplashViewModel>()
+
+    private lateinit var binding: ActivitySplashBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        setContentView(R.layout.activity_splash)
+        val binding = ActivitySplashBinding.inflate(LayoutInflater.from(this))
+        setContentView(binding.root)
         viewModel.observeViewState().observe(this) {
             when (it) {
                 is SplashViewState.Error -> renderError(it.error)
