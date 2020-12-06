@@ -27,6 +27,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/note_text_margin"
-            tools:text="@string/note1"/>
+            tools:text="@string/header"/>
     </LinearLayout>
 </androidx.cardview.widget.CardView>
