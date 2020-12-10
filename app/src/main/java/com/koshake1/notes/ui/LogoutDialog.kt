@@ -6,7 +6,7 @@ import android.os.Bundle
 import androidx.fragment.app.DialogFragment
 import com.koshake1.notes.R
 
-class LogoutDialog : DialogFragment() {
+class LogoutDialog : DialogFragment(){
 
     companion object {
         val TAG = LogoutDialog::class.java.name + "TAG"

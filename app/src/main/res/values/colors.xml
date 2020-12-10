@@ -13,4 +13,8 @@
     <color name="color_red">#ff8a80</color>
     <color name="color_violet">#e1bee7</color>
     <color name="color_pink">#f8bbd0</color>
+    <color name="color_indian_red">#CD5C5C</color>
+    <color name="color_gray">#ABB2B9</color>
+    <color name="color_dark_green">#1E8449</color>
+    <color name="color_orange">#D35400</color>
 </resources>

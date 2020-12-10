@@ -8,4 +8,5 @@ interface DatabaseProvider {
     fun getCurrentUser() : User?
     fun observeNotes(): LiveData<List<Note>>
     fun addOrReplaceNote(newNote: Note): LiveData<Result<Note>>
+    fun deleteNote(deletedNote: Note): LiveData<Result<Note>>
 }

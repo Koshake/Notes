@@ -53,6 +53,17 @@ class FireBaseProvider : DatabaseProvider {
         return result
     }
 
+    override fun deleteNote(deletedNote: Note): LiveData<Result<Note>> {
+        val result = MutableLiveData<Result<Note>>()
+            getUserNotesCollection().document(deletedNote.id.toString()).delete()
+                .addOnSuccessListener {
+                    result.value = Result.success(deletedNote)
+                }.addOnFailureListener {
+                    result.value = Result.failure(it)
+                }
+        return result
+    }
+
     private fun subscribeForDbChanging() {
         getUserNotesCollection().addSnapshotListener { snapshot, e ->
             if (e != null) {

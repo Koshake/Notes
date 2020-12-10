@@ -1,44 +1,50 @@
 package com.koshake1.notes.ui
 
-import android.content.Intent
 import android.os.Bundle
-import android.view.Menu
-import android.view.MenuInflater
-import android.view.MenuItem
-import androidx.fragment.app.Fragment
-import android.view.View
+import android.view.*
 import android.widget.Toast
+import androidx.fragment.app.Fragment
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.ViewModelProvider
-import com.firebase.ui.auth.AuthUI
 import com.koshake1.notes.viewmodel.MainViewModel
 import com.koshake1.notes.R
 import com.koshake1.notes.data.Note
+import com.koshake1.notes.databinding.FragmentMainBinding
 import com.koshake1.notes.ui.adapter.NotesAdapter
 import com.koshake1.notes.viewmodel.ViewState
-import kotlinx.android.synthetic.main.fragment_main.*
-import kotlinx.android.synthetic.main.fragment_main.toolbar
-import kotlinx.android.synthetic.main.fragment_note.*
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class MainFragment : Fragment(R.layout.fragment_main) {
+class MainFragment : Fragment() {
 
-    private val viewModel by lazy(LazyThreadSafetyMode.NONE) {
-        ViewModelProvider(this).get(
-            MainViewModel::class.java
-        )
+    private var _binding: FragmentMainBinding? = null
+    private val binding: FragmentMainBinding get() = _binding!!
+
+    private val viewModel by viewModel<MainViewModel>()
+
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        _binding = FragmentMainBinding.inflate(inflater, container, false)
+        return binding.root
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         setHasOptionsMenu(true)
-        (activity as AppCompatActivity?)?.setSupportActionBar(toolbar)
+        (activity as AppCompatActivity?)?.setSupportActionBar(binding.toolbar)
 
         val adapter = NotesAdapter {
             navigateToNote(it)
         }
 
-        mainRecycler.adapter = adapter
+        binding.mainRecycler.adapter = adapter
 
         viewModel.observeViewState().observe(viewLifecycleOwner) {
             when (it) {
@@ -49,7 +55,7 @@ class MainFragment : Fragment(R.layout.fragment_main) {
             }
         }
 
-        fab.setOnClickListener {
+        binding.fab.setOnClickListener {
             navigateToCreation()
         }
     }

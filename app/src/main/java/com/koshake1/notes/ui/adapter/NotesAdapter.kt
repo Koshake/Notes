@@ -6,9 +6,8 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.koshake1.notes.R
 import com.koshake1.notes.data.Note
-import kotlinx.android.synthetic.main.item_note.view.*
+import com.koshake1.notes.databinding.ItemNoteBinding
 
 val DIFF_UTIL: DiffUtil.ItemCallback<Note> = object : DiffUtil.ItemCallback<Note>() {
     override fun areItemsTheSame(oldItem: Note, newItem: Note): Boolean {
@@ -31,8 +30,15 @@ class NotesAdapter(val noteHandler: (Note) -> Unit) :
         holder.bind(getItem(position))
     }
 
-    inner class NoteViewHolder(parent: ViewGroup) : RecyclerView.ViewHolder(
-        LayoutInflater.from(parent.context).inflate(R.layout.item_note, parent, false)
+    inner class NoteViewHolder(
+        parent: ViewGroup,
+        private val binding: ItemNoteBinding = ItemNoteBinding.inflate(
+            LayoutInflater.from(parent.context),
+            parent,
+            false,
+        )
+    ) : RecyclerView.ViewHolder(
+        binding.root
     ) {
         private lateinit var currentNote: Note
 
@@ -42,11 +48,11 @@ class NotesAdapter(val noteHandler: (Note) -> Unit) :
 
         fun bind(item: Note) {
             currentNote = item
-            with(itemView) {
+            with(binding) {
                 title.text = item.title
                 body.text = item.note
-                setBackgroundColor(item.color)
-                setOnClickListener(clickListener)
+                root.setBackgroundColor(item.color)
+                root.setOnClickListener(clickListener)
             }
         }
     }
