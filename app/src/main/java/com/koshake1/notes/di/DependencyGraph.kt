@@ -1,5 +1,7 @@
 package com.koshake1.notes.di
 
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 import com.koshake1.notes.data.Note
 import com.koshake1.notes.data.NotesRepository
 import com.koshake1.notes.data.NotesRepositoryImpl
@@ -16,8 +18,10 @@ import org.koin.dsl.module
 object DependencyGraph {
     private val repositoryModule by lazy {
         module {
+            single { FirebaseAuth.getInstance() }
+            single { FirebaseFirestore.getInstance() }
             single { NotesRepositoryImpl(get()) } bind NotesRepository::class
-            single { FireBaseProvider() } bind DatabaseProvider::class
+            single { FireBaseProvider(get(), get()) } bind DatabaseProvider::class
         }
     }
 

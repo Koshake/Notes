@@ -1,11 +1,13 @@
 package com.koshake1.notes.ui
 
 import android.content.Context
+import android.graphics.Color
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentTransaction
 import com.koshake1.notes.R
 import com.koshake1.notes.data.NoteColor
+import kotlin.random.Random
 
 inline fun FragmentManager.inTransaction(func: FragmentTransaction.() -> Unit) {
     val fragmentTransaction = beginTransaction()

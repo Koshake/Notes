@@ -30,5 +30,5 @@ enum class NoteColor {
     INDIAN_RED,
     GRAY,
     DARK_GREEN,
-    ORANGE
+    ORANGE;
 }
