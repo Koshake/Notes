@@ -1,8 +1,6 @@
 package com.koshake1.notes.data.db
 
 import android.util.Log
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.CollectionReference
@@ -11,6 +9,12 @@ import com.google.firebase.firestore.QueryDocumentSnapshot
 import com.koshake1.notes.data.Note
 import com.koshake1.notes.data.User
 import com.koshake1.notes.errors.NoAuthException
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.suspendCancellableCoroutine
+import kotlin.coroutines.resumeWithException
+import kotlin.coroutines.suspendCoroutine
 
 private const val NOTES_COLLECTION = "notes"
 private const val USERS_COLLECTION = "users"
@@ -20,16 +24,15 @@ class FireBaseProvider(
     private val db: FirebaseFirestore,
     private val firebaseAuth: FirebaseAuth
 ) : DatabaseProvider {
-
-    private val result = MutableLiveData<List<Note>>()
+    private val result = MutableStateFlow<List<Note>?>(null)
     private var subscribedOnDb = false
 
     private val currentUser: FirebaseUser?
         get() = firebaseAuth.currentUser
 
-    override fun observeNotes(): LiveData<List<Note>> {
+    override fun observeNotes(): Flow<List<Note>> {
         if (!subscribedOnDb) subscribeForDbChanging()
-        return result
+        return result.filterNotNull()
     }
 
     override fun getCurrentUser(): User? {
@@ -38,51 +41,62 @@ class FireBaseProvider(
         }
     }
 
-    override fun addOrReplaceNote(newNote: Note): LiveData<Result<Note>> {
-        val result = MutableLiveData<Result<Note>>()
+    override suspend fun addOrReplaceNote(newNote: Note) {
+        suspendCoroutine<Unit> { continuation ->
+            handleNotesReference(
+                {
+                    getUserNotesCollection()
+                        .document(newNote.id.toString())
+                        .set(newNote)
+                        .addOnSuccessListener {
+                            Log.d(TAG, "Note $newNote is saved")
+                            continuation.resumeWith(Result.success(Unit))
+                        }
+                        .addOnFailureListener {
+                            Log.e(TAG, "Error saving note $newNote, message: ${it.message}")
+                            continuation.resumeWithException(it)
+                        }
 
-        getUserNotesCollection()
-            .document(newNote.id.toString())
-            .set(newNote)
-            .addOnSuccessListener {
-                Log.d(TAG, "Note $newNote is saved")
-                result.value = Result.success(newNote)
-            }
-            .addOnFailureListener {
-                Log.d(TAG, "Error saving note $newNote, message: ${it.message}")
-                result.value = Result.failure(it)
-            }
-
-        return result
+                }, {
+                    Log.e(TAG, "Error getting reference note $newNote, message: ${it.message}")
+                    continuation.resumeWithException(it)
+                }
+            )
+        }
     }
 
-    override fun deleteNote(deletedNote: Note): LiveData<Result<Note>> {
-        val result = MutableLiveData<Result<Note>>()
-        getUserNotesCollection().document(deletedNote.id.toString()).delete()
-            .addOnSuccessListener {
-                result.value = Result.success(deletedNote)
-            }.addOnFailureListener {
-                result.value = Result.failure(it)
-            }
-        return result
+    override suspend fun deleteNote(deletedNote: Note) {
+        suspendCancellableCoroutine<Unit> { continuation ->
+            getUserNotesCollection().document(deletedNote.id.toString()).delete()
+                .addOnSuccessListener {
+                    continuation.resumeWith(Result.success(Unit))
+                }.addOnFailureListener {
+                    continuation.resumeWithException(it)
+                }
+        }
     }
 
     private fun subscribeForDbChanging() {
-        getUserNotesCollection().addSnapshotListener { snapshot, e ->
-            if (e != null) {
-                Log.e(TAG, "Observe note exception:$e")
-            } else if (snapshot != null) {
-                val notes = mutableListOf<Note>()
+        handleNotesReference(
+            {
+                getUserNotesCollection().addSnapshotListener { snapshot, e ->
+                    if (e != null) {
+                        Log.e(TAG, "Observe note exception:$e")
+                    } else if (snapshot != null) {
+                        val notes = mutableListOf<Note>()
 
-                for (doc: QueryDocumentSnapshot in snapshot) {
-                    notes.add(doc.toObject(Note::class.java))
+                        for (doc: QueryDocumentSnapshot in snapshot) {
+                            notes.add(doc.toObject(Note::class.java))
+                        }
+
+                        result.value = notes
+                    }
                 }
-
-                result.value = notes
+                subscribedOnDb = true
+            }, {
+                Log.e(TAG, "Error getting reference while subscribed for notes")
             }
-        }
-
-        subscribedOnDb = true
+        )
     }
 
     private fun getUserNotesCollection() = currentUser?.let {

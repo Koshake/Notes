@@ -1,10 +1,11 @@
 package com.koshake1.notes.data
 
 import androidx.lifecycle.LiveData
+import kotlinx.coroutines.flow.Flow
 
 interface NotesRepository {
-    fun getCurrentUser() : User?
-    fun observeNotes(): LiveData<List<Note>>
-    fun addOrReplaceNote(newNote: Note) : LiveData<Result<Note>>
-    fun deleteNote(deletedNote: Note) : LiveData<Result<Note>>
+    suspend fun getCurrentUser(): User?
+    fun observeNotes(): Flow<List<Note>>
+    suspend fun addOrReplaceNote(newNote: Note)
+    suspend fun deleteNote(deletedNote: Note)
 }
