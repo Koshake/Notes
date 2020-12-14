@@ -16,13 +16,16 @@ private const val NOTES_COLLECTION = "notes"
 private const val USERS_COLLECTION = "users"
 const val TAG = "FireStoreDatabase"
 
-class FireBaseProvider : DatabaseProvider {
-    private val db = FirebaseFirestore.getInstance()
+class FireBaseProvider(
+    private val db: FirebaseFirestore,
+    private val firebaseAuth: FirebaseAuth
+) : DatabaseProvider {
+
     private val result = MutableLiveData<List<Note>>()
     private var subscribedOnDb = false
 
     private val currentUser: FirebaseUser?
-        get() = FirebaseAuth.getInstance().currentUser
+        get() = firebaseAuth.currentUser
 
     override fun observeNotes(): LiveData<List<Note>> {
         if (!subscribedOnDb) subscribeForDbChanging()
@@ -55,12 +58,12 @@ class FireBaseProvider : DatabaseProvider {
 
     override fun deleteNote(deletedNote: Note): LiveData<Result<Note>> {
         val result = MutableLiveData<Result<Note>>()
-            getUserNotesCollection().document(deletedNote.id.toString()).delete()
-                .addOnSuccessListener {
-                    result.value = Result.success(deletedNote)
-                }.addOnFailureListener {
-                    result.value = Result.failure(it)
-                }
+        getUserNotesCollection().document(deletedNote.id.toString()).delete()
+            .addOnSuccessListener {
+                result.value = Result.success(deletedNote)
+            }.addOnFailureListener {
+                result.value = Result.failure(it)
+            }
         return result
     }
 
