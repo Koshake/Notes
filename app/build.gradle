@@ -48,6 +48,7 @@ dependencies {
     implementation "androidx.lifecycle:lifecycle-livedata-ktx:$lifecycle_version"
     implementation fileTree(dir: "libs", include: ["*.jar"])
 
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.4.2"
     // DI
     def koin_ver = '2.1.6'
     implementation "org.koin:koin-core:$koin_ver"
